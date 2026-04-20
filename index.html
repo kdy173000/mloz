@@ -3,214 +3,26 @@
 
 <div class="dilution-calculator">
 
-  <h2 class="calc-title">희석비&nbsp;</h2>
+  <h2 class="calc-title">ml ↔ oz</h2>
 
   <div class="calc-body">
 
     <div class="calc-input">
-      <label>희석비</label>
-      <div class="ratio-input">
-        <span>1:</span>
-        <input type="text" id="waterRatio" placeholder="10" inputmode="decimal">
-      </div>
+      <label>ml</label>
+      <input type="text" id="mlAmount" placeholder="500" inputmode="decimal">
 
-      <label>총 용량 (ml)</label>
-      <input type="text" id="totalAmount" placeholder="1000" inputmode="decimal">
-    </div>
-
-    <div class="result">
-      <p class="result-label">원액</p>
-      <div class="result-value">
-        <input type="text" id="shampooAmount" placeholder="0" inputmode="decimal" class="result-input"> ml
-      </div>
-
-      <p class="result-label">물</p>
-      <div class="result-value">
-        <input type="text" id="waterAmount" placeholder="0" inputmode="decimal" class="result-input"> ml
-      </div>
+      <label>oz</label>
+      <input type="text" id="ozAmount" placeholder="16.91" inputmode="decimal">
     </div>
 
   </div>
 </div>
-
-<script>
-const waterRatioEl = document.getElementById("waterRatio");
-const totalAmountEl = document.getElementById("totalAmount");
-const shampooAmountEl = document.getElementById("shampooAmount");
-const waterAmountEl = document.getElementById("waterAmount");
-
-const fields = [waterRatioEl, totalAmountEl, shampooAmountEl, waterAmountEl];
-let isUpdating = false;
-
-function parseNumber(value) {
-  if (value === null || value === undefined) return NaN;
-  const cleaned = String(value).trim().replace(/,/g, ".");
-  if (cleaned === "") return NaN;
-  return parseFloat(cleaned);
-}
-
-function formatNumber(value) {
-  if (!isFinite(value)) return "";
-  const rounded = Math.round(value * 100) / 100;
-  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2);
-}
-
-function isFilled(el) {
-  return el.value.trim() !== "";
-}
-
-function getFilledFields() {
-  return fields.filter(isFilled);
-}
-
-function clearField(el) {
-  el.value = "";
-}
-
-function clearAllExcept(activeEl) {
-  fields.forEach((el) => {
-    if (el !== activeEl) clearField(el);
-  });
-}
-
-function setValues(values) {
-  isUpdating = true;
-
-  if (values.waterRatio !== undefined) waterRatioEl.value = formatNumber(values.waterRatio);
-  if (values.totalAmount !== undefined) totalAmountEl.value = formatNumber(values.totalAmount);
-  if (values.shampooAmount !== undefined) shampooAmountEl.value = formatNumber(values.shampooAmount);
-  if (values.waterAmount !== undefined) waterAmountEl.value = formatNumber(values.waterAmount);
-
-  isUpdating = false;
-}
-
-function calculateFromTwoInputs() {
-  const ratio = parseNumber(waterRatioEl.value);
-  const total = parseNumber(totalAmountEl.value);
-  const shampoo = parseNumber(shampooAmountEl.value);
-  const water = parseNumber(waterAmountEl.value);
-
-  const ratioFilled = !isNaN(ratio);
-  const totalFilled = !isNaN(total);
-  const shampooFilled = !isNaN(shampoo);
-  const waterFilled = !isNaN(water);
-
-  // 1) 희석비 + 총용량 -> 원액 + 물
-  if (ratioFilled && totalFilled && !shampooFilled && !waterFilled) {
-    if (ratio < 0 || total < 0) return;
-    const shampooAmount = total / (1 + ratio);
-    const waterAmount = total - shampooAmount;
-
-    setValues({
-      shampooAmount,
-      waterAmount
-    });
-    return;
-  }
-
-  // 2) 희석비 + 원액 -> 총용량 + 물
-  if (ratioFilled && shampooFilled && !totalFilled && !waterFilled) {
-    if (ratio < 0 || shampoo < 0) return;
-    const waterAmount = shampoo * ratio;
-    const totalAmount = shampoo + waterAmount;
-
-    setValues({
-      totalAmount,
-      waterAmount
-    });
-    return;
-  }
-
-  // 3) 희석비 + 물 -> 원액 + 총용량
-  if (ratioFilled && waterFilled && !totalFilled && !shampooFilled) {
-    if (ratio <= 0 || water < 0) return;
-    const shampooAmount = water / ratio;
-    const totalAmount = shampooAmount + water;
-
-    setValues({
-      shampooAmount,
-      totalAmount
-    });
-    return;
-  }
-
-  // 4) 총용량 + 원액 -> 희석비 + 물
-  if (totalFilled && shampooFilled && !ratioFilled && !waterFilled) {
-    if (total < 0 || shampoo < 0 || shampoo > total || shampoo === 0) return;
-    const waterAmount = total - shampoo;
-    const waterRatio = waterAmount / shampoo;
-
-    setValues({
-      waterRatio,
-      waterAmount
-    });
-    return;
-  }
-
-  // 5) 총용량 + 물 -> 희석비 + 원액
-  if (totalFilled && waterFilled && !ratioFilled && !shampooFilled) {
-    if (total < 0 || water < 0 || water > total) return;
-    const shampooAmount = total - water;
-    if (shampooAmount <= 0) return;
-    const waterRatio = water / shampooAmount;
-
-    setValues({
-      waterRatio,
-      shampooAmount
-    });
-    return;
-  }
-
-  // 6) 원액 + 물 -> 희석비 + 총용량
-  if (shampooFilled && waterFilled && !ratioFilled && !totalFilled) {
-    if (shampoo <= 0 || water < 0) return;
-    const waterRatio = water / shampoo;
-    const totalAmount = shampoo + water;
-
-    setValues({
-      waterRatio,
-      totalAmount
-    });
-    return;
-  }
-}
-
-function handleInput(e) {
-  if (isUpdating) return;
-
-  const filledCount = getFilledFields().length;
-
-  if (filledCount === 2) {
-    calculateFromTwoInputs();
-  }
-}
-
-function handleFocus(e) {
-  if (isUpdating) return;
-
-  const filledCount = getFilledFields().length;
-
-  // 이미 4칸이 모두 채워져 있으면,
-  // 수정하려는 칸 하나만 남기고 나머지 3칸 비움
-  if (filledCount === 4) {
-    isUpdating = true;
-    clearAllExcept(e.target);
-    isUpdating = false;
-  }
-}
-
-fields.forEach((field) => {
-  field.addEventListener("focus", handleFocus);
-  field.addEventListener("input", handleInput);
-});
-</script>
 
 <style>
 :root{
   color-scheme: light dark;
   --ui-font: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
-  /* Light mode */
   --calc-border: #d9d9d9;
   --divider: #e5e5e5;
   --text-main: #111111;
@@ -222,12 +34,10 @@ fields.forEach((field) => {
 
 @media (prefers-color-scheme: dark){
   :root{
-    /* Dark mode */
     --calc-border: #6b6b6b;
     --divider: #555555;
     --text-main: #f5f5f5;
     --text-sub: #d6d6d6;
-    --input-bg: transparent;
     --input-border: #666666;
     --placeholder: #9b9b9b;
   }
@@ -242,47 +52,27 @@ fields.forEach((field) => {
   margin: auto;
   background: transparent;
   color: var(--text-main);
-  box-sizing: border-box;
 }
 
-/* TITLE */
 .calc-title{
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   font-size: 26px;
   font-weight: 700;
-  color: var(--text-main);
 }
 
-/* BODY */
 .calc-body{
   display: flex;
-  gap: 40px;
 }
 
-/* INPUT */
 .calc-input{
-  flex: 1;
+  width: 100%;
 }
 
 label{
   display: block;
   color: var(--text-sub);
   font-weight: 500;
-}
-
-.ratio-input{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 15px;
-}
-
-.ratio-input span{
-  font-size: 18px;
-  font-weight: 700;
-  margin-top: 0;
-  color: var(--text-main);
 }
 
 input{
@@ -293,9 +83,8 @@ input{
   border: 1px solid var(--input-border);
   font-size: 16px;
   font-family: var(--ui-font);
-  background: var(--input-bg);
+  background: transparent;
   color: var(--text-main);
-  box-sizing: border-box;
   outline: none;
 }
 
@@ -303,124 +92,57 @@ input::placeholder{
   color: var(--placeholder);
 }
 
-input::-webkit-inner-spin-button,
-input::-webkit-outer-spin-button{
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* RESULT */
-.result{
-  flex: 1;
-  border-left: 1px solid var(--divider);
-  padding-left: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 6px;
-}
-
-.result-label{
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-  margin-bottom: 2px;
-  line-height: 40px;
-  color: var(--text-sub);
-}
-
-.result-value{
-  font-size: 30px;
-  font-weight: 700;
-  margin: 0;
-  margin-bottom: 10px;
-  line-height: 20px;
-  color: var(--text-main);
-}
-
-.result-input{
-  display: inline-block;
-  width: 120px;
-  padding: 0;
-  margin: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  line-height: inherit;
-  box-sizing: border-box;
-  vertical-align: middle;
-}
-
-.result-input:focus{
-  outline: none;
-}
-
-.result-input::placeholder{
-  color: var(--placeholder);
-}
-
 /* MOBILE */
 @media (max-width: 768px){
   .dilution-calculator{
-    padding: 17px;
+    padding: 18px;
   }
 
   .calc-title{
-    font-size: 25px;
-    margin-bottom: 18px;
-    margin-top: 0;
-  }
-
-  .calc-body{
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  label{
-    font-size: 15px;
-    margin-bottom: 2px;
+    font-size: 22px;
   }
 
   input{
-    padding: 8px;
     font-size: 15px;
-  }
-
-  .ratio-input{
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 3px;
-  }
-
-  .ratio-input span{
-    font-size: 20px;
-    margin-top: 0;
-  }
-
-  .result{
-    border-left: none;
-    border-top: 1px solid var(--divider);
-    padding-left: 0;
-    padding-top: 15px;
-  }
-
-  .result-label{
-    font-size: 15px;
-    line-height: 28px;
-  }
-
-  .result-value{
-    font-size: 22px;
-    line-height: 18px;
-  }
-
-  .result-input{
-    width: 90px;
-    padding: 0;
-    font-size: inherit;
   }
 }
 </style>
+
+<script>
+const mlInput = document.getElementById("mlAmount");
+const ozInput = document.getElementById("ozAmount");
+
+let isUpdating = false;
+
+// ml → oz
+mlInput.addEventListener("input", () => {
+  if (isUpdating) return;
+  isUpdating = true;
+
+  const ml = parseFloat(mlInput.value.replace(",", "."));
+
+  if (!isNaN(ml)) {
+    ozInput.value = (ml * 0.033814).toFixed(2);
+  } else {
+    ozInput.value = "";
+  }
+
+  isUpdating = false;
+});
+
+// oz → ml
+ozInput.addEventListener("input", () => {
+  if (isUpdating) return;
+  isUpdating = true;
+
+  const oz = parseFloat(ozInput.value.replace(",", "."));
+
+  if (!isNaN(oz)) {
+    mlInput.value = (oz * 29.5735).toFixed(0);
+  } else {
+    mlInput.value = "";
+  }
+
+  isUpdating = false;
+});
+</script>
