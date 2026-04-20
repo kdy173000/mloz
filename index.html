@@ -2,54 +2,27 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
 
 <div class="dilution-calculator">
-  <h2 class="calc-title">희석비&nbsp;</h2>
+
+  <h2 class="calc-title">ml ↔ oz</h2>
 
   <div class="calc-body">
+
     <div class="calc-input">
+      <label>ml</label>
+      <input type="text" id="mlAmount" placeholder="500" inputmode="decimal">
 
-      <label>희석비</label>
-      <div class="ratio-input">
-        <span>1 :</span>
-        <input type="text" id="waterRatio" placeholder="10" inputmode="decimal">
-      </div>
-
-      <div class="group-divider"></div>
-
-      <label>총 용량</label>
-      <div class="unit-input">
-        <input type="text" id="totalAmount" placeholder="" inputmode="decimal">
-        <div class="unit-inside" data-target="totalAmount">
-          <button type="button" class="unit-btn active" data-unit="ml">ml</button>
-          <button type="button" class="unit-btn" data-unit="L">L</button>
-        </div>
-      </div>
-
-      <label>물</label>
-      <div class="unit-input">
-        <input type="text" id="waterAmount" placeholder="" inputmode="decimal">
-        <div class="unit-inside" data-target="waterAmount">
-          <button type="button" class="unit-btn active" data-unit="ml">ml</button>
-          <button type="button" class="unit-btn" data-unit="L">L</button>
-        </div>
-      </div>
-
-      <label>원액</label>
-      <div class="unit-input">
-        <input type="text" id="shampooAmount" placeholder="" inputmode="decimal">
-        <div class="unit-inside" data-target="shampooAmount">
-          <button type="button" class="unit-btn active" data-unit="ml">ml</button>
-          <button type="button" class="unit-btn" data-unit="L">L</button>
-        </div>
-      </div>
-
+      <label>oz</label>
+      <input type="text" id="ozAmount" placeholder="16.91" inputmode="decimal">
     </div>
+
   </div>
 </div>
 
 <style>
-:root {
+:root{
   color-scheme: light dark;
   --ui-font: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
   --calc-border: #d9d9d9;
   --divider: #e5e5e5;
   --text-main: #111111;
@@ -59,19 +32,18 @@
   --placeholder: #9a9a9a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+@media (prefers-color-scheme: dark){
+  :root{
     --calc-border: #6b6b6b;
     --divider: #555555;
     --text-main: #f5f5f5;
     --text-sub: #d6d6d6;
-    --input-bg: transparent;
     --input-border: #666666;
     --placeholder: #9b9b9b;
   }
 }
 
-.dilution-calculator {
+.dilution-calculator{
   font-family: var(--ui-font);
   border: 1px solid var(--calc-border);
   border-radius: 14px;
@@ -80,307 +52,97 @@
   margin: auto;
   background: transparent;
   color: var(--text-main);
-  box-sizing: border-box;
 }
 
-.calc-title {
+.calc-title{
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   font-size: 26px;
   font-weight: 700;
-  color: var(--text-main);
 }
 
-.calc-body {
+.calc-body{
   display: flex;
-  gap: 40px;
 }
 
-.calc-input {
-  flex: 1;
+.calc-input{
+  width: 100%;
 }
 
-label {
+label{
   display: block;
   color: var(--text-sub);
   font-weight: 500;
-  margin-bottom: 4px;
 }
 
-.ratio-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.ratio-input span {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-main);
-  white-space: nowrap;
-}
-
-input {
+input{
   width: 100%;
   padding: 10px;
-  margin: 0;
+  margin: 8px 0 15px 0;
   border-radius: 6px;
   border: 1px solid var(--input-border);
   font-size: 16px;
   font-family: var(--ui-font);
-  background: var(--input-bg);
+  background: transparent;
   color: var(--text-main);
-  box-sizing: border-box;
   outline: none;
 }
 
-input::placeholder {
+input::placeholder{
   color: var(--placeholder);
 }
 
-input::-webkit-inner-spin-button,
-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.unit-input {
-  position: relative;
-  margin-bottom: 10px;
-}
-
-.unit-input input {
-  padding-right: 86px;
-}
-
-.unit-inside {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  background: transparent;
-}
-
-.unit-btn {
-  appearance: none;
-  border: none;
-  background: transparent;
-  color: var(--text-sub);
-  font-family: var(--ui-font);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 0 8px;
-  height: 24px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.unit-btn + .unit-btn {
-  border-left: 1px solid var(--input-border);
-}
-
-.unit-btn.active {
-  color: var(--text-main);
-  font-weight: 700;
-}
-
-.group-divider {
-  width: 100%;
-  height: 1px;
-  background: var(--divider);
-  margin: 20px 0;
-}
-
-@media (max-width: 768px) {
-  .dilution-calculator {
-    padding: 17px;
+/* MOBILE */
+@media (max-width: 768px){
+  .dilution-calculator{
+    padding: 18px;
   }
 
-  .calc-title {
-    font-size: 25px;
-    margin-bottom: 18px;
-    margin-top: 0;
+  .calc-title{
+    font-size: 22px;
   }
 
-  .calc-body {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  label {
+  input{
     font-size: 15px;
-    margin-bottom: 4px;
-  }
-
-  input {
-    padding: 8px;
-    font-size: 15px;
-  }
-
-  .ratio-input {
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-
-  .ratio-input span {
-    font-size: 20px;
-  }
-
-  .unit-input input {
-    padding-right: 76px;
-  }
-
-  .unit-btn {
-    font-size: 12px;
-    padding: 0 7px;
-    height: 22px;
-  }
-
-  .group-divider {
-    margin: 20px 0 12px;
   }
 }
 </style>
 
 <script>
-const waterRatioEl    = document.getElementById("waterRatio");
-const totalAmountEl   = document.getElementById("totalAmount");
-const waterAmountEl   = document.getElementById("waterAmount");
-const shampooAmountEl = document.getElementById("shampooAmount");
-
-const units = { totalAmount: "ml", waterAmount: "ml", shampooAmount: "ml" };
-
-// ml 기준 원본값 보관 - 단위 전환 시 오차 누적 없음
-const rawMl = { totalAmount: NaN, waterAmount: NaN, shampooAmount: NaN };
+const mlInput = document.getElementById("mlAmount");
+const ozInput = document.getElementById("ozAmount");
 
 let isUpdating = false;
 
-function parseNumber(value) {
-  if (value == null) return NaN;
-  let s = String(value).trim();
-  if (s === "") return NaN;
-  if (/\d,\d/.test(s) && !/\d\.\d/.test(s)) {
-    s = s.replace(/\./g, "").replace(",", ".");
-  } else {
-    s = s.replace(/,/g, "");
-  }
-  return parseFloat(s);
-}
-
-function formatNumber(value) {
-  if (!isFinite(value)) return "";
-  const rounded = Math.round(value * 100) / 100;
-  return rounded.toLocaleString("ko-KR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-}
-
-function toMl(fieldId, value) {
-  if (!isFinite(value)) return NaN;
-  return units[fieldId] === "L" ? value * 1000 : value;
-}
-
-function fromMl(fieldId, ml) {
-  if (!isFinite(ml)) return NaN;
-  return units[fieldId] === "L" ? ml / 1000 : ml;
-}
-
-function setField(el, fieldId, ml) {
-  rawMl[fieldId] = ml;
-  el.value = isFinite(ml) ? formatNumber(fromMl(fieldId, ml)) : "";
-}
-
-function clearField(el, fieldId) {
-  rawMl[fieldId] = NaN;
-  el.value = "";
-}
-
-function getRatio() {
-  const r = parseNumber(waterRatioEl.value);
-  return isFinite(r) && r >= 0 ? r : NaN;
-}
-
-// source 필드 + 희석비를 기준으로 나머지 두 필드 계산
-function recalcFrom(source) {
-  const ratio = getRatio();
-  if (isNaN(ratio)) return;
-
-  const ml = rawMl[source];
-  if (!isFinite(ml) || ml < 0) return;
-
-  let totalMl, waterMl, shampooMl;
-
-  if (source === "totalAmount") {
-    totalMl   = ml;
-    shampooMl = totalMl / (1 + ratio);
-    waterMl   = totalMl - shampooMl;
-  } else if (source === "waterAmount") {
-    waterMl   = ml;
-    shampooMl = ratio > 0 ? waterMl / ratio : 0;
-    totalMl   = shampooMl + waterMl;
-  } else {
-    shampooMl = ml;
-    waterMl   = shampooMl * ratio;
-    totalMl   = shampooMl + waterMl;
-  }
-
-  isUpdating = true;
-  if (source !== "totalAmount")   setField(totalAmountEl,   "totalAmount",   totalMl);
-  if (source !== "waterAmount")   setField(waterAmountEl,   "waterAmount",   waterMl);
-  if (source !== "shampooAmount") setField(shampooAmountEl, "shampooAmount", shampooMl);
-  isUpdating = false;
-}
-
-// 희석비 변경 - 값이 있는 첫 번째 필드 기준으로 재계산
-waterRatioEl.addEventListener("input", () => {
+// ml → oz
+mlInput.addEventListener("input", () => {
   if (isUpdating) return;
-  const source = ["totalAmount", "waterAmount", "shampooAmount"].find(id => isFinite(rawMl[id]));
-  if (source) recalcFrom(source);
+  isUpdating = true;
+
+  const ml = parseFloat(mlInput.value.replace(",", "."));
+
+  if (!isNaN(ml)) {
+    ozInput.value = (ml * 0.033814).toFixed(2);
+  } else {
+    ozInput.value = "";
+  }
+
+  isUpdating = false;
 });
 
-// 3개 필드 공통 입력 핸들러
-function handleFieldInput(el, fieldId) {
-  el.addEventListener("input", () => {
-    if (isUpdating) return;
-    const ml = toMl(fieldId, parseNumber(el.value));
-    rawMl[fieldId] = ml;
-    if (isFinite(ml) && ml >= 0) {
-      recalcFrom(fieldId);
-    } else {
-      // 값을 지우면 나머지 두 필드도 초기화
-      isUpdating = true;
-      ["totalAmount", "waterAmount", "shampooAmount"]
-        .filter(id => id !== fieldId)
-        .forEach(id => clearField(document.getElementById(id), id));
-      isUpdating = false;
-    }
-  });
-}
+// oz → ml
+ozInput.addEventListener("input", () => {
+  if (isUpdating) return;
+  isUpdating = true;
 
-handleFieldInput(totalAmountEl,   "totalAmount");
-handleFieldInput(waterAmountEl,   "waterAmount");
-handleFieldInput(shampooAmountEl, "shampooAmount");
+  const oz = parseFloat(ozInput.value.replace(",", "."));
 
-// 단위 버튼
-document.querySelectorAll(".unit-inside").forEach(toggle => {
-  const targetId = toggle.dataset.target;
-  const inputEl  = document.getElementById(targetId);
+  if (!isNaN(oz)) {
+    mlInput.value = (oz * 29.5735).toFixed(0);
+  } else {
+    mlInput.value = "";
+  }
 
-  toggle.querySelectorAll(".unit-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const newUnit = btn.dataset.unit;
-      if (newUnit === units[targetId]) return;
-
-      units[targetId] = newUnit;
-      toggle.querySelectorAll(".unit-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      // rawMl 원본에서 표시만 변환 - 오차 누적 없음
-      if (isFinite(rawMl[targetId])) {
-        inputEl.value = formatNumber(fromMl(targetId, rawMl[targetId]));
-      }
-    });
-  });
+  isUpdating = false;
 });
 </script>
