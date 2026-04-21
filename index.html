@@ -1,148 +1,237 @@
-<!-- Pretendard -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>재고 차이 계산기</title>
+
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
 
-<div class="dilution-calculator">
-
-  <h2 class="calc-title">ml ↔ oz</h2>
-
-  <div class="calc-body">
-
-    <div class="calc-input">
-      <label>ml</label>
-      <input type="text" id="mlAmount" placeholder="500" inputmode="decimal">
-
-      <label>oz</label>
-      <input type="text" id="ozAmount" placeholder="16.91" inputmode="decimal">
-    </div>
-
-  </div>
-</div>
-
 <style>
-:root{
-  color-scheme: light dark;
-  --ui-font: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+:root {
+  --ui-font: "Pretendard", sans-serif;
 
   --calc-border: #d9d9d9;
   --divider: #e5e5e5;
-  --text-main: #111111;
-  --text-sub: #444444;
-  --input-bg: transparent;
+
+  --text-main: #111;
+  --text-sub: #444;
+
   --input-border: #cfcfcf;
   --placeholder: #9a9a9a;
+
+  --blue: #228be6;
+  --red: #e03131;
+  --gray: #868e96;
+
+  --bg: #ffffff;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
 }
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --calc-border: #6b6b6b;
-    --divider: #555555;
-    --text-main: #f5f5f5;
-    --text-sub: #d6d6d6;
-    --input-border: #666666;
-    --placeholder: #9b9b9b;
+/* 🌙 다크모드 자동 적용 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --calc-border: #2b2b2b;
+    --divider: #3a3a3a;
+
+    --text-main: #f1f3f5;
+    --text-sub: #ced4da;
+
+    --input-border: #3a3a3a;
+    --placeholder: #868e96;
+
+    --blue: #4dabf7;
+    --red: #ff6b6b;
+    --gray: #adb5bd;
+
+    --bg: #121212;
+    --card-bg: #1e1e1e;
+    --input-bg: #2a2a2a;
   }
 }
 
-.dilution-calculator{
+body {
+  margin: 0;
+  padding: 20px;
   font-family: var(--ui-font);
+  background: var(--bg);
+  color: var(--text-main);
+}
+
+.stock-calculator {
   border: 1px solid var(--calc-border);
   border-radius: 14px;
   padding: 30px;
   max-width: 700px;
   margin: auto;
-  background: transparent;
-  color: var(--text-main);
+  background: var(--card-bg);
 }
 
-.calc-title{
+.calc-title {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   font-size: 26px;
   font-weight: 700;
 }
 
-.calc-body{
-  display: flex;
-}
-
-.calc-input{
-  width: 100%;
-}
-
-label{
+label {
   display: block;
+  margin-bottom: 4px;
   color: var(--text-sub);
-  font-weight: 500;
 }
 
-input{
+input {
   width: 100%;
   padding: 10px;
-  margin: 8px 0 15px 0;
+  margin-bottom: 10px;
   border-radius: 6px;
   border: 1px solid var(--input-border);
   font-size: 16px;
   font-family: var(--ui-font);
-  background: transparent;
+  box-sizing: border-box;
+  background: var(--input-bg);
   color: var(--text-main);
-  outline: none;
 }
 
-input::placeholder{
+input::placeholder {
   color: var(--placeholder);
 }
 
-/* MOBILE */
-@media (max-width: 768px){
-  .dilution-calculator{
-    padding: 18px;
-  }
+input[readonly] {
+  background: rgba(0,0,0,0.05);
+}
 
-  .calc-title{
-    font-size: 22px;
-  }
+.required-star {
+  color: red;
+}
 
-  input{
-    font-size: 15px;
-  }
+.group-divider {
+  height: 1px;
+  background: var(--divider);
+  margin: 20px 0;
+}
+
+.result-wrapper {
+  position: relative;
+}
+
+.result-wrapper input {
+  padding-left: 80px;
+  margin-bottom: 0;
+}
+
+.badge {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: none;
+}
+
+.badge.in {
+  background: rgba(34,139,230,0.15);
+  color: var(--blue);
+  display: inline-block;
+}
+
+.badge.out {
+  background: rgba(224,49,49,0.15);
+  color: var(--red);
+  display: inline-block;
+}
+
+.badge.zero {
+  background: rgba(134,142,150,0.15);
+  color: var(--gray);
+  display: inline-block;
 }
 </style>
+</head>
+
+<body>
+
+<div class="stock-calculator">
+  <h2 class="calc-title">재고 차이 계산기</h2>
+  <div class="calc-body">
+    <div class="calc-input">
+      <label>실제 재고 <span class="required-star">*</span></label>
+      <input type="text" id="actualStock" placeholder="실제 재고 입력" inputmode="numeric">
+
+      <label>전산 재고 <span class="required-star">*</span></label>
+      <input type="text" id="systemStock" placeholder="전산 재고 입력" inputmode="numeric">
+
+      <div class="group-divider"></div>
+
+      <label>결과</label>
+      <div class="result-wrapper">
+        <span id="resultBadge" class="badge"></span>
+        <input type="text" id="resultStock" placeholder="결과값" readonly>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-const mlInput = document.getElementById("mlAmount");
-const ozInput = document.getElementById("ozAmount");
+const actualEl = document.getElementById("actualStock");
+const systemEl = document.getElementById("systemStock");
+const resultEl = document.getElementById("resultStock");
+const badgeEl  = document.getElementById("resultBadge");
 
-let isUpdating = false;
+function formatNumber(v) {
+  return Number(v).toLocaleString("ko-KR");
+}
 
-// ml → oz
-mlInput.addEventListener("input", () => {
-  if (isUpdating) return;
-  isUpdating = true;
+function parseNumber(v) {
+  if (!v) return NaN;
+  return parseFloat(String(v).replace(/,/g, ""));
+}
 
-  const ml = parseFloat(mlInput.value.replace(",", "."));
+function handleInputFormat(e) {
+  const raw = e.target.value.replace(/[^0-9]/g, "");
+  if (!raw) {
+    e.target.value = "";
+    calculate();
+    return;
+  }
+  e.target.value = formatNumber(raw);
+  calculate();
+}
 
-  if (!isNaN(ml)) {
-    ozInput.value = (ml * 0.033814).toFixed(2);
-  } else {
-    ozInput.value = "";
+function calculate() {
+  const actual = parseNumber(actualEl.value);
+  const system = parseNumber(systemEl.value);
+
+  if (!isFinite(actual) || !isFinite(system)) {
+    resultEl.value = "";
+    badgeEl.className = "badge";
+    return;
   }
 
-  isUpdating = false;
-});
+  const diff = actual - system;
 
-// oz → ml
-ozInput.addEventListener("input", () => {
-  if (isUpdating) return;
-  isUpdating = true;
-
-  const oz = parseFloat(ozInput.value.replace(",", "."));
-
-  if (!isNaN(oz)) {
-    mlInput.value = (oz * 29.5735).toFixed(0);
+  if (diff > 0) {
+    resultEl.value = formatNumber(diff);
+    badgeEl.textContent = "입고";
+    badgeEl.className = "badge in";
+  } else if (diff < 0) {
+    resultEl.value = formatNumber(Math.abs(diff));
+    badgeEl.textContent = "출고";
+    badgeEl.className = "badge out";
   } else {
-    mlInput.value = "";
+    resultEl.value = "0";
+    badgeEl.textContent = "일치";
+    badgeEl.className = "badge zero";
   }
+}
 
-  isUpdating = false;
-});
+actualEl.addEventListener("input", handleInputFormat);
+systemEl.addEventListener("input", handleInputFormat);
 </script>
+
+</body>
+</html>
